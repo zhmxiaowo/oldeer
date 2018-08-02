@@ -272,6 +272,7 @@
     <Compile Include="Assets\oldeer\context\ContextServer.cs" />
     <Compile Include="Assets\oldeer\context\IContextStart.cs" />
     <Compile Include="Assets\oldeer\flow\AppInit.cs" />
+    <Compile Include="Assets\oldeer\io\FileHelper.cs" />
     <Compile Include="Assets\oldeer\oldeerTemplate.cs" />
     <Compile Include="Assets\oldeer\olog\Olog.cs" />
     <Compile Include="Assets\oldeer\test\fm\testStart.cs" />
