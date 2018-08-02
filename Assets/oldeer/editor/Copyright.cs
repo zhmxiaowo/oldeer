@@ -30,7 +30,7 @@ namespace oldeer
                 allText += File.ReadAllText(path);
                 allText = allText.Replace("#author#", author);
                 allText = allText.Replace("#time#", System.DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-                File.WriteAllText(path, allText);
+                File.WriteAllText(path, allText,System.Text.Encoding.UTF8);
             }
         }
     }
