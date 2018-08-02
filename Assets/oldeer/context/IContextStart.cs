@@ -1,4 +1,4 @@
-/*===========================================================================
+ï»¿/*===========================================================================
  * Copyright (C) 2018-2021, 4DAGE Technology Co., Ltd. and/or its affiliates.
  * All rights reserved.
  * 
@@ -7,17 +7,17 @@
 ==========================================================================*/
 
 /// <summary>
-///  Context³ÌĞò¿ªÊ¼µÄ½Ó¿Ú,ĞÂ³¡¾°µÄ³õÊ¼»¯²¿¼ş¿ªÊ¼ĞèÒª¼Ì³Ğ¸ÃÀà²ÅÄÜ¿ªÊ¼
+///  Contextç¨‹åºå¼€å§‹çš„æ¥å£,æ–°åœºæ™¯çš„åˆå§‹åŒ–éƒ¨ä»¶å¼€å§‹éœ€è¦ç»§æ‰¿è¯¥ç±»æ‰èƒ½å¼€å§‹
 /// </summary>
 using UnityEngine;
 public abstract class IContextStart : MonoBehaviour
 {
-    //³¡¾°index
+    //åœºæ™¯index
     public int level = 0;
 
     public IContextStart()
     {
-        //ĞÂ³¡¾°¿ÉÒÔ³õÊ¼»¯Ò»±éÔÙ½øĞĞ²Ù×÷
+        //æ–°åœºæ™¯å¯ä»¥åˆå§‹åŒ–ä¸€éå†è¿›è¡Œæ“ä½œ
         //ContextServer.Init();
     }
     public virtual void Awake()
