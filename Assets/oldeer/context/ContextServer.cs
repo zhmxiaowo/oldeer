@@ -4,7 +4,7 @@
  * 
  * author:  osmin
  * time:    2018.7.27
-============================================================================*/
+==========================================================================*/
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,14 +21,14 @@ public class ContextServer {
         //Debug.Log(t.Name);
         if (contexts.ContainsKey(t))
         {
-            Debug.Log(t + " Context已经存在!");
+            OLog.Log(t + " Context already exist!");
         }
         else
         {
             contexts.Add(t, c);
         }
-
     }
+    //获取对象
     public static T GetContext<T>() where T : class,IContext
     {
         System.Type type = typeof(T);
@@ -39,10 +39,21 @@ public class ContextServer {
         }
         else
         {
-            //            contexts.Remove(type);
-            //            contexts.Add(type,c);
-            Debug.Log(type.ToString() + "尚未初始化");
+            OLog.Log(type.ToString() + "not initalization yet!");
         }
         return null;
+    }
+    //初始化
+    public static void Init()
+    {
+        if(contexts != null)
+        {
+            contexts.Clear();
+        }
+        else
+        {
+            contexts = new Dictionary<System.Type, IContext>();
+        }
+        OLog.Log("=====>context init<======");
     }
 }

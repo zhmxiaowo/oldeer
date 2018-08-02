@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2017
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oldeer", "oldeer.csproj", "{AEAD788B-3F16-C1A7-2F84-23D7E383B5C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oldeer.Editor", "oldeer.Editor.csproj", "{22529E92-F4FC-AECF-8526-AF9B809563B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{AEAD788B-3F16-C1A7-2F84-23D7E383B5C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEAD788B-3F16-C1A7-2F84-23D7E383B5C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEAD788B-3F16-C1A7-2F84-23D7E383B5C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22529E92-F4FC-AECF-8526-AF9B809563B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22529E92-F4FC-AECF-8526-AF9B809563B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22529E92-F4FC-AECF-8526-AF9B809563B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22529E92-F4FC-AECF-8526-AF9B809563B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

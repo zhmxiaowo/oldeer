@@ -13,22 +13,11 @@ using UnityEngine;
 public interface IContext
 {
 
-    //注册和调用事件的接口
-    //protected virtual void Register()
-    //{
-
-    //}
-
-    // 初始化后会注册到主事件中心
-    //IContext();
 }
-
-
 
 //非挂载的context
 public abstract class BaseContext : IContext
 {
-
     //注册和调用事件的接口
     protected virtual void Register()
     {
@@ -42,7 +31,7 @@ public abstract class BaseContext : IContext
     }
 }
 
-//挂载的context
+//挂载Unity的context
 public abstract class MonoContext : MonoBehaviour,IContext
 {
 
