@@ -651,6 +651,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\oldeer\3rd\CSharp vNext Support\AsyncTools\AsyncTools.cs" />
+    <Compile Include="Assets\oldeer\3rd\CSharp vNext Support\AsyncTools\NextFrameHelper.cs" />
+    <Compile Include="Assets\oldeer\3rd\CSharp vNext Support\AsyncTools\UnityTaskScheduler.cs" />
     <Compile Include="Assets\oldeer\3rd\Messenger\Callback.cs" />
     <Compile Include="Assets\oldeer\3rd\Messenger\Messenger.cs" />
     <Compile Include="Assets\oldeer\3rd\ui\Tools\ItemInterface.cs" />
@@ -664,6 +667,7 @@
     <Compile Include="Assets\oldeer\context\ContextServer.cs" />
     <Compile Include="Assets\oldeer\context\IContextStart.cs" />
     <Compile Include="Assets\oldeer\flow\AppInit.cs" />
+    <Compile Include="Assets\oldeer\http\NetUtility.cs" />
     <Compile Include="Assets\oldeer\io\FileUtility.cs" />
     <Compile Include="Assets\oldeer\io\ZipUtility.cs" />
     <Compile Include="Assets\oldeer\oldeerTemplate.cs" />

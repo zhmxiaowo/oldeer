@@ -5,20 +5,6 @@
  * author:  osmin
  * time:    2019/03/13 11:10:29
 ============================================================================*/
-/*===========================================================================
- * Copyright (C) 2018-2021, 4DAGE Technology Co., Ltd. and/or its affiliates.
- * All rights reserved.
- * 
- * author:  osmin
- * time:    2019/03/13 11:10:16
-============================================================================*/
-/*===========================================================================
- * Copyright (C) 2018-2021, 4DAGE Technology Co., Ltd. and/or its affiliates.
- * All rights reserved.
- * 
- * author:  osmin
- * time:    2019/03/13 11:00:30
-============================================================================*/
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
