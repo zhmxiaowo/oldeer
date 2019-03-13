@@ -1,4 +1,4 @@
-/*===========================================================================
+ï»¿/*===========================================================================
  * Copyright (C) 2018-2021, 4DAGE Technology Co., Ltd. and/or its affiliates.
  * All rights reserved.
  * 
@@ -10,19 +10,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 /// <summary>
-/// ÎÄ¼ş¶ÁĞ´°ïÖúÀà
-/// Í³Ò»×Ö·û´®Ê¹ÓÃUTF-8±àÂë¸ñÊ½
+/// æ–‡ä»¶è¯»å†™å¸®åŠ©ç±»
+/// ç»Ÿä¸€å­—ç¬¦ä¸²ä½¿ç”¨UTF-8ç¼–ç æ ¼å¼
 /// </summary>
-public static class FileHelper
-
+public static class FileUtility
 {
-    //Ö÷ÎÄ¼şÂ·¾¶
+    //ä¸»æ–‡ä»¶è·¯å¾„
     public static string local_data_path = Application.persistentDataPath + "/creator/";
 
-    //ÁÙÊ±ÎÄ¼şÂ·¾¶
+    //ä¸´æ—¶æ–‡ä»¶è·¯å¾„
     public static string local_temp_path = Application.temporaryCachePath + "/";
 
-    //unityÖ÷Ïß³Ìµ÷ÓÃÒ»´Î Â·¾¶ĞÅÏ¢,·ÀÖ¹³ö´í
+    //unityä¸»çº¿ç¨‹è°ƒç”¨ä¸€æ¬¡ è·¯å¾„ä¿¡æ¯,é˜²æ­¢å‡ºé”™
     public static void init()
     {
         local_data_path = Application.persistentDataPath + "/creator/";
@@ -30,40 +29,40 @@ public static class FileHelper
     }
 
     /// <summary>
-    /// ±£´æ×Ö·û´®string µ½ÎÄ¼ş
+    /// ä¿å­˜å­—ç¬¦ä¸²string åˆ°æ–‡ä»¶
     /// </summary>
-    /// <param name="path">Â·¾¶ Èç "C:/temp/Savepath/"</param>
-    /// <param name="name">ÎÄ¼şÃû Èç "filename.txt"</param>
-    /// <param name="data">Êı¾İÔ´(string)</param>
+    /// <param name="path">è·¯å¾„ å¦‚ "C:/temp/Savepath/"</param>
+    /// <param name="name">æ–‡ä»¶å å¦‚ "filename.txt"</param>
+    /// <param name="data">æ•°æ®æº(string)</param>
     public static void SaveToFile(string path, string name, string data)
     {
         SaveToFile(path + name, data);
     }
 
     /// <summary>
-    /// ±£´æ×Ö·û´®string µ½ÎÄ¼ş
+    /// ä¿å­˜å­—ç¬¦ä¸²string åˆ°æ–‡ä»¶
     /// </summary>
-    /// <param name="path">Â·¾¶ Èç "C:/temp/Savepath/filename.txt"</param>
-    /// <param name="data">Êı¾İÔ´(string)</param>
+    /// <param name="path">è·¯å¾„ å¦‚ "C:/temp/Savepath/filename.txt"</param>
+    /// <param name="data">æ•°æ®æº(string)</param>
     public static void SaveToFile(string path, string data)
     {
         try
         {
-            //ÎÄ¼şÁ÷ĞÅÏ¢
-            //Èç¹ûÎÄ¼ş¼Ğ²»´æÔÚ,Ôò´´½¨Â·¾¶
-            if (!Directory.Exists(path))
+            //æ–‡ä»¶æµä¿¡æ¯
+            //å¦‚æœæ–‡ä»¶å¤¹ä¸å­˜åœ¨,åˆ™åˆ›å»ºè·¯å¾„
+            if (!Directory.Exists(path.Substring(0,path.LastIndexOf("/"))))
             {
                 Directory.CreateDirectory(path);
             }
 
-            //´ò¿ªÎÄ¼şĞÅÏ¢
+            //æ‰“å¼€æ–‡ä»¶ä¿¡æ¯
             FileInfo t = new FileInfo(path);
             if (t.Exists)
             {
-                //Èç¹û´ËÎÄ¼ş´æÔÚÔòÉ¾³ı
+                //å¦‚æœæ­¤æ–‡ä»¶å­˜åœ¨åˆ™åˆ é™¤
                 t.Delete();
             }
-            //±£´æÎÄ¼ş
+            //ä¿å­˜æ–‡ä»¶
             FileStream st = new FileStream(path, FileMode.Create);
             byte[] dataByte = System.Text.Encoding.UTF8.GetBytes(data);
             st.Flush();
@@ -78,29 +77,43 @@ public static class FileHelper
     }
 
     /// <summary>
-    /// ¶ÁÈ¡ÎÄ¼ş
+    /// è¯»å–æ–‡ä»¶
     /// </summary>
-    /// <param name="path">ÎÄ¼şÍêÕûÂ·¾¶</param>
+    /// <param name="path">æ–‡ä»¶å®Œæ•´è·¯å¾„</param>
     /// <returns>string</returns>
     public static string ReadFile(string path)
     {
         FileInfo fi = new FileInfo(path);
         if (!fi.Exists)
         {
-            UnityEngine.Debug.Log("¶ÁÈ¡µÄÎÄ¼ş²»´æÔÚ" + path);
+            UnityEngine.Debug.Log("è¯»å–çš„æ–‡ä»¶ä¸å­˜åœ¨" + path);
             return string.Empty;
         }
-        StreamReader sr = new StreamReader(path);
-        string data = sr.ReadToEnd();
-        sr.Close();
-        sr.Dispose();
+        StreamReader sr = null;
+        string data = "";
+        try
+        {
+            sr = new StreamReader(path);
+            data = sr.ReadToEnd();
+            sr.Close();
+            sr.Dispose();
+        }
+        catch(System.Exception e)
+        {
+            Debug.Log("è¯»å–æ–‡ä»¶å‡ºé”™" + e.ToString());
+            if(sr != null)
+            {
+                sr.Close();
+                sr.Dispose();
+            }
+        }
         return data;
     }
 
     /// <summary>
-    /// ¶ÁÈ¡ÎÄ¼şµÄbyte×Ö½Ú
+    /// è¯»å–æ–‡ä»¶çš„byteå­—èŠ‚
     /// </summary>
-    /// <param name="path">Â·¾¶</param>
+    /// <param name="path">è·¯å¾„</param>
     /// <returns></returns>
     public static byte[] ReadFileByte(string path)
     {
@@ -134,9 +147,9 @@ public static class FileHelper
     }
 
     /// <summary>
-    /// ÅĞ¶ÏÎÄ¼şÊÇ·ñ´æÔÚ
+    /// åˆ¤æ–­æ–‡ä»¶æ˜¯å¦å­˜åœ¨
     /// </summary>
-    /// <param name="path">ÎÄ¼şÍêÕûÂ·¾¶</param>
+    /// <param name="path">æ–‡ä»¶å®Œæ•´è·¯å¾„</param>
     /// <returns></returns>
     public static bool FileExist(string path)
     {
@@ -145,7 +158,7 @@ public static class FileHelper
     }
 
     #region alongside texture
-    //´Ó±¾µØ¼ÓÔØÍ¼Æ¬
+    //ä»æœ¬åœ°åŠ è½½å›¾ç‰‡
     public static Texture2D LoadTexutreFromDisk(string texpath, int w = 1, int h = 1)
     {
         byte[] datas = ReadFileByte(texpath);
@@ -158,17 +171,17 @@ public static class FileHelper
         }
         else
         {
-            Debug.Log("»ñÈ¡Í¼Æ¬Ê§°Ü " + texpath);
+            Debug.Log("è·å–å›¾ç‰‡å¤±è´¥ " + texpath);
         }
         return tex;
     }
-    //»ñÈ¡sprite
+    //è·å–sprite
     public static Sprite GetSprite(Texture2D tex)
     {
         Sprite sp = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.one * 0.5f);
         return sp;
     }
-    //»ñÈ¡spirte
+    //è·å–spirte
     public static Sprite GetSprite(string path, int w = 1, int h = 1)
     {
         Texture2D tex = LoadTexutreFromDisk(path, w, h);

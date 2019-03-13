@@ -12,7 +12,7 @@ using UnityEngine;
 //context 接口
 public interface IContext
 {
-
+    void Init();
 }
 
 //非挂载的context
@@ -28,6 +28,11 @@ public abstract class BaseContext : IContext
     {
         //注册
         ContextServer.OnRegister(this.GetType(), this);
+        Init();
+    }
+    public virtual void Init()
+    {
+
     }
 }
 
@@ -46,7 +51,11 @@ public abstract class MonoContext : MonoBehaviour,IContext
     {
         //注册
         ContextServer.OnRegister(this.GetType(), this);
+        Init();
     }
+    public virtual void Init()
+    {
 
+    }
 }
 

@@ -20,9 +20,16 @@ public abstract class IContextStart : MonoBehaviour
         //新场景可以初始化一遍再进行操作
         //ContextServer.Init();
     }
+
     public virtual void Awake()
     {
         ContextServer.Init();
+    }
+
+    //失败的时候
+    public virtual void Destroy()
+    {
+        Resources.UnloadUnusedAssets();
     }
 
 }

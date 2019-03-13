@@ -48,24 +48,26 @@ namespace TinyTeam.UI {
             Canvas can = go.AddComponent<Canvas>();
             can.renderMode = RenderMode.ScreenSpaceCamera;
             can.pixelPerfect = true;
-
+            can.planeDistance = 1;
             go.AddComponent<GraphicRaycaster>();
 
             m_Instance.root = go.transform;
 
             GameObject camObj = new GameObject("@UICamera");
             camObj.layer = LayerMask.NameToLayer("UI");
-            camObj.transform.parent = go.transform;
-            camObj.transform.localPosition = new Vector3(0, 0, -100f);
+            //测试出现的可能情况
+            //camObj.transform.parent = go.transform;
+            go.transform.SetParent(camObj.transform,false);
+            camObj.transform.localPosition = new Vector3(0, 100, -100f);
             Camera cam = camObj.AddComponent<Camera>();
             cam.clearFlags = CameraClearFlags.Depth;
             cam.orthographic = true;
-            cam.farClipPlane = 200f;
+            cam.farClipPlane = 1000f;
             can.worldCamera = cam;
             cam.cullingMask = 1 << 5;
-            cam.nearClipPlane = -50f;
-            cam.farClipPlane = 50f;
-
+            cam.nearClipPlane = -2000f;
+            cam.farClipPlane = 200f;
+            cam.useOcclusionCulling = false;
             cam.depth = 50f;
             m_Instance.uiCamera = cam;
 
@@ -75,7 +77,7 @@ namespace TinyTeam.UI {
 
             CanvasScaler cs = go.AddComponent<CanvasScaler>();
             cs.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            Vector2 resolotion = new Vector2(1080f, 1920f);
+            Vector2 resolotion = new Vector2(1080f, 1920f);//new Vector2(Screen.width, Screen.height);//
             // iphonex 适配 
             //if (DeviceScreenRect.iPhoneX)
             //{
@@ -88,23 +90,26 @@ namespace TinyTeam.UI {
             //}
             cs.referenceResolution = resolotion;
             cs.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-            cs.matchWidthOrHeight = 0.5f;
+
+            //2018.8.18 osmin 使用width适配,天然优势
+            //cs.matchWidthOrHeight = 0.5f;
+            cs.matchWidthOrHeight = 0f;
             //set the raycaster
             //GraphicRaycaster gr = go.AddComponent<GraphicRaycaster>();
 
             GameObject subRoot;
 //            subRoot = CreateSubCanvasForRoot(go.transform, 0);
-            subRoot = CreateSubCanvas(go.transform, 0);
+            subRoot = CreateSubCanvas(go.transform, 51);
             subRoot.name = "NormalRoot";
             m_Instance.normalRoot = subRoot.transform as RectTransform;
             m_Instance.normalRoot.transform.localScale = Vector3.one;
 
-            subRoot = CreateSubCanvas(go.transform, 250);
+            subRoot = CreateSubCanvas(go.transform, 251);
             subRoot.name = "FixedRoot";
             m_Instance.fixedRoot = subRoot.transform as RectTransform;
             m_Instance.fixedRoot.transform.localScale = Vector3.one;
 
-            subRoot = CreateSubCanvas(go.transform, 500);
+            subRoot = CreateSubCanvas(go.transform, 501);
             subRoot.name = "PopupRoot";
             m_Instance.popupRoot = subRoot.transform as RectTransform;
             m_Instance.popupRoot.transform.localScale = Vector3.one;
@@ -186,16 +191,18 @@ namespace TinyTeam.UI {
                 m_Instance.normalRoot.GetComponent<BaseRaycaster>().enabled = ignore;
             }
         }
-        public static void ShortDisable(float time = 1f)
+        public static async void ShortDisable(float time = 1f)
         {
             if (m_Instance != null)
             {
                 EnableRayCaster(false);
-                m_Instance.StartCoroutine(_ShortDisable(time));
-                var task = Task.Run(() => {
-                    System.Threading.Tasks.Task.Delay((int)(time * 1000));
-                    EnableRayCaster(true);
-                });
+                //m_Instance.StartCoroutine(_ShortDisable(time));
+                //var task = Task.Run(async() => {
+                //    System.Threading.Tasks.Task.Delay((int)(time * 1000));
+                //    await AsyncTools.ToMainThread();
+                //});
+                await Task.Delay((int)(time * 1000));
+                EnableRayCaster(true);
             }
         }
         static IEnumerator _ShortDisable(float time)

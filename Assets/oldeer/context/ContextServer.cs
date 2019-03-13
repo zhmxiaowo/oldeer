@@ -14,7 +14,7 @@ public class ContextServer {
 
     //context中心
     static Dictionary<System.Type, IContext> contexts = new Dictionary<System.Type, IContext>();
-    
+    public static GameObject mananger = null;
     //注册
     public static void OnRegister(System.Type t, IContext c)
     {
@@ -39,10 +39,24 @@ public class ContextServer {
         }
         else
         {
-            OLog.Log(type.ToString() + "not initalization yet!");
+            OLog.Log(type.ToString() + " not initalization yet!");
         }
         return null;
     }
+
+    public static T GetSimilarContext<T>() where T : class, IContext
+    {
+        System.Type type = typeof(T);
+        foreach(var i in contexts.Values)
+        {
+            if((i is T))
+            {
+                return i as T;
+            }
+        }
+        return null;
+    }
+
     //初始化
     public static void Init()
     {
@@ -55,5 +69,42 @@ public class ContextServer {
             contexts = new Dictionary<System.Type, IContext>();
         }
         OLog.Log("=====>context init<======");
+    }
+
+    //创建对象
+    public static T CreateContext<T>() where T : class, IContext
+    {
+        //创建context
+        var types = System.Reflection.Assembly.GetExecutingAssembly().GetTypes();
+        System.Type type = typeof(T);
+        System.Type baseType = typeof(BaseContext);
+        System.Type monoType = typeof(MonoContext);
+        foreach (System.Type t in types)
+        {
+            if (t == type)
+            {
+                if(t.BaseType == baseType)
+                {
+                    T newT = t.Assembly.CreateInstance(t.FullName) as T;
+                    return newT;
+                }
+                else
+                {
+                    if(!mananger)
+                    {
+                        mananger = new GameObject("@Manager");
+                    }
+                    return mananger.gameObject.AddComponent(t) as T;
+                }
+            }
+        }
+        return null;
+
+    }
+
+
+    public static void Dispose()
+    {
+        contexts.Clear();
     }
 }

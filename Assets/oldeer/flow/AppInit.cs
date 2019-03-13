@@ -1,4 +1,4 @@
-/*===========================================================================
+ï»¿/*===========================================================================
  * Copyright (C) 2018-2021, 4DAGE Technology Co., Ltd. and/or its affiliates.
  * All rights reserved.
  * 
@@ -8,45 +8,109 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
+using UnityEngine.SceneManagement;
 namespace oldeer
 {
-    //Ö»´´½¨Ò»´Î,²¢ÇÒÓÀ²»Ïú»Ù,ÓÃÓÚÁ÷³ÌÊáÀí Ğ´ÈëÒ»Ğ©Ö»Ö´ĞĞÒ»´ÎµÄ²Ù×÷
+    //åªåˆ›å»ºä¸€æ¬¡,å¹¶ä¸”æ°¸ä¸é”€æ¯,ç”¨äºæµç¨‹æ¢³ç† å†™å…¥ä¸€äº›åªæ‰§è¡Œä¸€æ¬¡çš„æ“ä½œ
     public class AppInit : MonoBehaviour
     {
 
-        //ÓïÑÔ 0 ÖĞÎÄ 1 Ó¢ÎÄ
+        public static AppInit Instance;
+        public Action appStart;
+        public Action appUpdate;
+        public Action appOnDestroy;
+        public Action appOnApplicationQuit;
+        public Action appOnGUI;
+        public Action<int> appOnLevelLoad;
+        public Action<bool> appPause;
+        public Action<bool> applicationFocus;
+
+        //æ·»åŠ ä¸Šä¼ ç³»ç»Ÿç®¡ç†ç±»
+        //public  static UploadSystem uploadSystem= new UploadSystem();
+
+        //è¯­è¨€ 0 ä¸­æ–‡ 1 è‹±æ–‡
         public int language = 0;
 
-        private void Awake()
-        {
-            DontDestroyOnLoad(this.gameObject);
-        }
-        // Use this for initialization
-        void Start()
-        {
 
-        }
-
-        //±£´æµ÷ÓÃ·½·¨
+        //ä¿å­˜è°ƒç”¨æ–¹æ³•
         private static List<System.Type> addtionInitOnceList = new List<System.Type>();
 
         /// <summary>
-        /// Ö»³õÊ¼»¯Ò»´ÎµÄ·½·¨¿ÉÒÔÔÚÕâÀï¸½¼Óµ÷ÓÃ,¿ÉÒÔÓĞĞ§·ÀÖ¹¶à´Îµ÷ÓÃ,³ÌĞòÔËĞĞµ½½áÊø,¶à´Îµ÷ÓÃ,·½·¨Ò²Ö»Ö´ĞĞÒ»´Î
+        /// åªåˆå§‹åŒ–ä¸€æ¬¡çš„æ–¹æ³•å¯ä»¥åœ¨è¿™é‡Œé™„åŠ è°ƒç”¨,å¯ä»¥æœ‰æ•ˆé˜²æ­¢å¤šæ¬¡è°ƒç”¨,ç¨‹åºè¿è¡Œåˆ°ç»“æŸ,å¤šæ¬¡è°ƒç”¨,æ–¹æ³•ä¹Ÿåªæ‰§è¡Œä¸€æ¬¡
         /// </summary>
-        /// <param name="sender">µ÷ÓÃµÄµÄÖ÷ÒªÀà,Í¨³£Îªthis</param>
-        /// <param name="action">µ÷ÓÃµÄ·½·¨</param>
+        /// <param name="sender">è°ƒç”¨çš„çš„ä¸»è¦ç±»,é€šå¸¸ä¸ºthis</param>
+        /// <param name="action">è°ƒç”¨çš„æ–¹æ³•</param>
         public static void AddInit(object sender, System.Action action)
         {
             System.Type type = sender.GetType();
             if (!addtionInitOnceList.Contains(type))
             {
                 addtionInitOnceList.Add(type);
-                //µ÷ÓÃÒ»´Î
+                //è°ƒç”¨ä¸€æ¬¡
                 action();
             }
         }
 
+        #region Monoå‘¨æœŸå‡½æ•°
+        // Use this for initialization
+        protected void Awake()
+        {
+            Instance = this;
+            DontDestroyOnLoad(this.gameObject);
+            //uploadSystem = new UploadSystem();
+            SceneManager.sceneLoaded += HandleUnityAction;
+        }
+
+        void HandleUnityAction(Scene arg0, LoadSceneMode arg1)
+        {
+            appOnLevelLoad?.Invoke(arg0.rootCount);
+
+        }
+
+
+        protected void OnApplicationFocus(bool focus)
+        {
+            applicationFocus?.Invoke(focus);
+        }
+
+        protected void OnApplicationPause(bool pause)
+        {
+            appPause?.Invoke(pause);
+        }
+
+        protected void Start()
+        {
+            appStart?.Invoke();
+        }
+
+        protected void Update()
+        {
+            appUpdate?.Invoke();
+        }
+        /*
+        protected void OnLevelWasLoaded(int level)
+        {
+            appOnLevelLoad?.Invoke(level);
+        }*/
+
+        protected void OnGUI()
+        {
+            appOnGUI?.Invoke();
+        }
+
+        protected void OnDestroy()
+        {
+            appOnDestroy?.Invoke();
+        }
+
+        protected void OnApplicationQuit()
+        {
+            appOnApplicationQuit?.Invoke();
+        }
+
+       
+        #endregion
     }
 }
 

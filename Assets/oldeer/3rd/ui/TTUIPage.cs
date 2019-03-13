@@ -1,4 +1,8 @@
-﻿namespace TinyTeam.UI
+﻿///error :
+/// Dispose 目前可能存在问题，当主动删除实体对象时候应该调用Dispose才行，目前没做
+/// 但是正常删除uiroot是可以做到dispose的
+///
+namespace TinyTeam.UI
 {
     using System;
     using UnityEngine;
@@ -19,18 +23,18 @@
 
     public enum UIType
     {
-        Normal,
-        Fixed,
-        PopUp,
-        None,      //独立的窗口
+        Normal,     //最底层，基本窗口
+        Fixed,      //中间层窗口
+        PopUp,      //最上层窗口
+        None,       //特殊，独立的窗口，不依赖于任何一层，在child最下面，显示在最前
     }
 
     public enum UIMode
     {
-        DoNothing,
-        HideOther,     // 闭其他界面
-        NeedBack,      // 点击返回按钮关闭当前,不关闭其他界面(需要调整好层级关系)
-        NoNeedBack,    // 关闭TopBar,关闭其他界面,不加入backSequence队列
+        DoNothing,      //打开的时候什么也不做，仅仅是叠加在当前UIType的最上层
+        HideOther,     // 打开的时候会自动关闭其他界面(慎用)
+        NeedBack,      // 点击返回按钮关闭当前,并且自动刷新上一级界面
+        NoNeedBack,    // 特殊，唯一一种不需要返回的界面(一般不使用)
     }
 
     public enum UICollider
@@ -114,6 +118,13 @@
             this.m_data = null;
         }
 
+        /// <summary>
+        /// 执行清理的时候
+        /// </summary>
+        public virtual void Dispose()
+        {
+
+        }
         #endregion
 
         #region internal api
@@ -143,15 +154,15 @@
             {
                 GameObject go = null;
 
-                if (delegateSyncLoadUI != null)
-                {
-                    Object o = delegateSyncLoadUI(uiPath);
-                    go = o != null ? GameObject.Instantiate(o) as GameObject : null;
-                }
-                else
-                {
+                //if (delegateSyncLoadUI != null)
+                //{
+                //    Object o = delegateSyncLoadUI(uiPath);
+                //    go = o != null ? GameObject.Instantiate(o) as GameObject : null;
+                //}
+                //else
+                //{
                     go = GameObject.Instantiate(Resources.Load(uiPath)) as GameObject;
-                }
+                //}
 
                 //protected.
                 if (go == null)
@@ -244,13 +255,17 @@
         //change by osmin,去掉了对不动UI的pop支持
         internal bool CheckIfNeedBack()
         {
-//            if (type == UIType.Fixed || type == UIType.PopUp || type == UIType.None) return false;
-//            else if (mode == UIMode.NoNeedBack || mode == UIMode.DoNothing) return false;
+            //if (type == UIType.Fixed || type == UIType.PopUp || type == UIType.None) return false;
+            //else if (mode == UIMode.NoNeedBack || mode == UIMode.DoNothing) return false;
+            //return true;
+            if (type == UIType.None) return false;
+            if (mode == UIMode.NoNeedBack) return false;
             return true;
         }
 
         protected void AnchorUIGameObject(GameObject ui)
         {
+
             if (TTUIRoot.Instance == null || ui == null) return;
 
             this.gameObject = ui;
@@ -327,6 +342,7 @@
         /// </summary>
         private static void PopNode(TTUIPage page)
         {
+         
             if (m_currentPageNodes == null)
             {
                 m_currentPageNodes = new List<TTUIPage>();
@@ -343,7 +359,6 @@
             {
                 return;
             }
-
             bool _isFound = false;
             for (int i = 0; i < m_currentPageNodes.Count; i++)
             {
@@ -371,13 +386,15 @@
         /// </summary>
         private static void HideOldNodes()
         {
-            if (m_currentPageNodes.Count < 1) return;
+            
+            if (m_currentPageNodes.Count <= 0) return;
             TTUIPage topPage = m_currentPageNodes[m_currentPageNodes.Count - 1];
             if (topPage.mode == UIMode.HideOther)
             {
                 //form bottm to top.
                 for (int i = m_currentPageNodes.Count - 2; i >= 0; i--)
                 {
+
                     if(m_currentPageNodes[i].isActive())
                         m_currentPageNodes[i].Hide();
                 }
@@ -391,6 +408,11 @@
         }
         public static void ClearAllPage()
         {
+            //清理一遍
+            foreach(var node in m_allPages.Values)
+            {
+                node.Dispose();
+            }
             if(m_allPages != null)
                 m_allPages.Clear();
         }
@@ -400,10 +422,9 @@
         {
             Type t = typeof(T);
             string pageName = t.ToString();
-
             if (m_allPages != null && m_allPages.ContainsKey(pageName))
             {
-               return ShowPage(pageName, m_allPages[pageName], pageData) as T;
+                return ShowPage(pageName, m_allPages[pageName], pageData) as T;
             }
             else
             {
@@ -445,8 +466,6 @@
                 {
                     page.m_data = pageData; 
                 }
-
-
 
                 page.Show();
                 return page;
@@ -539,7 +558,15 @@
         public static T GetPage<T>() where T : TTUIPage
         {
             String pageName = typeof(T).ToString();
-            return GetPage(pageName) as T;
+            var instance = GetPage(pageName);
+            if(instance != null)
+            {
+                return instance as T;
+            }
+            else
+            {
+                return null;
+            }
         }
         //获取特定类型的,别名为 pageName的ui
         public static T GetPage<T>(string pageName) where T:TTUIPage
@@ -558,14 +585,25 @@
             if (instance == null)
             {
                 Debug.Log(pageName + "尚未创建!");
+                return null; 
+            }else
+            {
+                return instance as T;
             }
-            return instance as T;
-        }
-        //返回当前的类型对象
-        //public static T ShowPageAndReturn<T>() where T : TTUIPage
-        //{
 
-        //}
+        }
+        //获取当前ui是否在显示状态
+        public static bool IsShow<T>()
+        {
+            String pageName = typeof(T).ToString();
+            TTUIPage instance = null;
+            if (m_allPages != null && m_allPages.TryGetValue(pageName,out instance))
+            {
+                if(instance.isActived)
+                    return true;
+            }
+            return false;
+        }
 
         #endregion
         /// <summary>
@@ -584,20 +622,13 @@
             //TODO:Sub pages.belong to root node.
             if (m_currentPageNodes.Count > 0)
             {
-                TTUIPage page = m_currentPageNodes[m_currentPageNodes.Count - 1];
-                if (page.isAsyncUI)
-//                    ShowPage(page.name, page, () =>
-//                    {
-                        closePage.Hide();
-//                    });
-                else
+                if (closePage.mode == UIMode.NeedBack)
                 {
-//                    ShowPage(page.name, page);
-
-                    //after show to hide().
-                    closePage.Hide();
+                    TTUIPage page = m_currentPageNodes[m_currentPageNodes.Count - 1];
+                    page.Refresh();
                 }
             }
+            closePage.Hide();
         }
         /// <summary>
         /// 关闭目标界面,并且刷新当前界面的上一级界面 refresh   active
@@ -625,25 +656,17 @@
             if (m_currentPageNodes != null && m_currentPageNodes.Count >= 1 && m_currentPageNodes[m_currentPageNodes.Count - 1] == target)
             {
                 m_currentPageNodes.RemoveAt(m_currentPageNodes.Count - 1);
-
                 //show older page.
                 //TODO:Sub pages.belong to root node.
                 //如果不是只剩target,则把最上层的ui刷新一遍
                 if (m_currentPageNodes.Count > 0)
                 {
-                    TTUIPage page = m_currentPageNodes[m_currentPageNodes.Count - 1];
-                    if (page.isAsyncUI)
-//                        ShowPage(page.name, page, () =>
-//                        {
-                            target.Hide();
-//                        });
-                    else
+                    if (target.mode == UIMode.NeedBack)
                     {
-//                        ShowPage(page.name, page);
-                        target.Hide();
+                        TTUIPage page = m_currentPageNodes[m_currentPageNodes.Count - 1];
+                        page.Refresh();
                     }
-
-                    return;
+                    //return;
                 }
             }
             else if (target.CheckIfNeedBack())

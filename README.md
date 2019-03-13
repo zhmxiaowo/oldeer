@@ -56,6 +56,23 @@
     }
 
 ```
+UIPanel.cs
+
+```
+    public class UIPanel : TTUIPage
+    {
+        
+        public UIPanel() : base(UIType.PopUp, UIMode.DoNothing, UICollider.Normal)
+        {
+            uiPath = "UIPanel";
+        }
+        public override void Awake(GameObject go)
+        {
+            base.Awake(go);
+        }
+    }
+```
+
 
 # Context简易处理框架
 
@@ -107,6 +124,7 @@ Init-->Class:IContext
 ```
 TempClass
 ```
+
 # Copyright
 1. 创建.cs文件时候会自动补齐版权头部
 2. 可在Copyright.cs内修改作者或者添加内容
