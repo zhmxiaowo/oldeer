@@ -152,7 +152,7 @@ namespace TinyTeam.UI {
         static GameObject CreateSubCanvas(Transform root,int sort)
         {
             GameObject go = new GameObject("canvas");
-            go.transform.parent = root;
+            go.transform.SetParent(root,false);
             go.layer = LayerMask.NameToLayer("UI");
             RectTransform rect = go.AddComponent<RectTransform>();
 

@@ -291,15 +291,15 @@ namespace TinyTeam.UI
 
             if (type == UIType.Fixed)
             {
-                ui.transform.SetParent(TTUIRoot.Instance.fixedRoot);
+                ui.transform.SetParent(TTUIRoot.Instance.fixedRoot,false);
             }
             else if (type == UIType.Normal)
             {
-                ui.transform.SetParent(TTUIRoot.Instance.normalRoot);
+                ui.transform.SetParent(TTUIRoot.Instance.normalRoot,false);
             }
             else if (type == UIType.PopUp)
             {
-                ui.transform.SetParent(TTUIRoot.Instance.popupRoot);
+                ui.transform.SetParent(TTUIRoot.Instance.popupRoot,false);
             }
 
             if (ui.GetComponent<RectTransform>() != null)
