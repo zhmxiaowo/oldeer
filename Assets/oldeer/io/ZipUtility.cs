@@ -1,14 +1,8 @@
-﻿/*===========================================================================
- * Copyright (C) 2018-2021, 4DAGE Technology Co., Ltd. and/or its affiliates.
- * All rights reserved.
- * 
- * author:  su
- * time:    2019/02/25 11:41:16
-============================================================================*/
-using System.Collections;
+﻿using System.Collections;
 using System.IO;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Zip;
+using ICSharpCode.SharpZipLib.Checksum;
 using UnityEngine;
 public static class ZipUtility
 {
@@ -18,7 +12,9 @@ public static class ZipUtility
         public string rootDir;
         public long totalLen = 0;
         public long curLen = 0;
-
+        //public float progress = 0;
+        private Crc32 crc = new Crc32();
+        byte[] buffer = new byte[4096];
 
         public long getAllFileLength(string strBaseDir)
         {
@@ -159,7 +155,24 @@ public static class ZipUtility
             {
                 using (ZipOutputStream s = new ZipOutputStream(ZipFile))
                 {
-                    ZipSetp(strDirectory, s, rootDir, includeDir, ref progress);
+                    try
+                    {
+                        s.UseZip64 = UseZip64.Off;
+                        s.SetLevel(8);
+                        ZipSetp(strDirectory, s, rootDir, includeDir, ref progress, Path.GetFileName(zipedFile));
+                        progress = 1;
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.Log("压缩出错了" + e.ToString());
+                        progress = 0;
+                    }
+                    finally
+                    {
+                        s.Finish();
+                        s.Close();
+                        s.Dispose();
+                    }
                 }
             }
             return progress >= 1 ? true : false;
@@ -171,17 +184,20 @@ public static class ZipUtility
         /// <param name="strDirectory">The directory.</param>
         /// <param name="s">The ZipOutputStream Object.</param>
         /// <param name="parentPath">The parent path.</param>
-        private void ZipSetp(string strDirectory, ZipOutputStream s, string parentPath, bool includeDir, ref float progress)
+        private void ZipSetp(string strDirectory, ZipOutputStream s, string parentPath, bool includeDir, ref float progress, string ignore = "")
         {
-            if (strDirectory[strDirectory.Length - 1] != Path.DirectorySeparatorChar)
+            if (strDirectory[strDirectory.Length - 1] != Path.DirectorySeparatorChar && strDirectory[strDirectory.Length - 1] != '/')
             {
                 strDirectory += Path.DirectorySeparatorChar;
             }
             strDirectory.Replace("\\", "/");
 
             string[] filenames = Directory.GetFileSystemEntries(strDirectory);
-            for(int i =0;i<filenames.Length;i++)
+
+            for (int i = 0; i < filenames.Length; i++)
+            {
                 filenames[i] = filenames[i].Replace("\\", "/");
+            }
 
             foreach (string file in filenames)// 遍历所有的文件和目录
             {
@@ -190,12 +206,11 @@ public static class ZipUtility
                     string pPath = parentPath;
                     pPath += file.Substring(file.LastIndexOf("/") + 1);
                     pPath += "/";
-                    ZipSetp(file, s, pPath, includeDir, ref progress);
+                    ZipSetp(file, s, pPath, includeDir, ref progress, ignore);
                 }
-
                 else // 否则直接压缩文件
                 {
-                    if (file.Contains(".Zip"))
+                    if (!string.IsNullOrEmpty(ignore) && file.Contains(ignore))
                     {
                         continue;
                     }
@@ -206,20 +221,25 @@ public static class ZipUtility
                         byte[] buffer = new byte[fs.Length];
                         sourceBytes = fs.Read(buffer, 0, buffer.Length);
 
-                        string name = Path.GetFileName(file);//file.Substring(file.LastIndexOf("/") + 1); //没有错的
+                        string name = Path.GetFileName(file);
                         string fileName = parentPath + name;
-                        //Debug.Log("total  " + fileName);
+
+                        Debug.Log("total:" + fileName);
                         ZipEntry entry = new ZipEntry(fileName);
                         entry.DateTime = System.DateTime.Now;
                         entry.Size = fs.Length;
-
                         fs.Close();
+
+                        crc.Reset();
+                        crc.Update(buffer);
+                        entry.Crc = crc.Value;
+
                         s.PutNextEntry(entry);
                         s.Write(buffer, 0, buffer.Length);
                         curLen += sourceBytes;
                         //Debug.Log("当前压缩的长度----" +curLen);
-                        progress = (float)(double)curLen / totalLen;
-                        //Debug.Log("压缩的进度是------" + progress);
+                        progress = (float)(curLen / (double)totalLen);
+                        Debug.Log("压缩的进度是------" + progress);
                     }
                 }
             }
@@ -291,5 +311,5 @@ public static class ZipUtility
         ZipClass zc = new ZipClass();
         return zc.ZipFileDirectory(strDirectory, zipedFile, includeDir, ref progress);
     }
- 
+
 }
