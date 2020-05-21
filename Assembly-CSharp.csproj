@@ -80,8 +80,10 @@
     <Compile Include="Assets\oldeer\io\FileHelper.cs" />
     <Compile Include="Assets\oldeer\io\FileUtility.cs" />
     <Compile Include="Assets\oldeer\io\ZipUtility.cs" />
+    <Compile Include="Assets\oldeer\log\FileLogOutPut.cs" />
+    <Compile Include="Assets\oldeer\log\ILogOutPut.cs" />
+    <Compile Include="Assets\oldeer\log\LogTool.cs" />
     <Compile Include="Assets\oldeer\oldeerTemplate.cs" />
-    <Compile Include="Assets\oldeer\Olog\Olog.cs" />
     <Compile Include="Assets\oldeer\Singleton\ISingleton.cs" />
     <Compile Include="Assets\oldeer\Singleton\MonoSingleton.cs" />
     <Compile Include="Assets\oldeer\Singleton\Singleton.cs" />
