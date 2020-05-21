@@ -5,10 +5,12 @@
  * @Last Modified time: 2017-05-27 18:33:48
  */
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine;
 using System.Threading.Tasks;
+using System.Linq;
 namespace TinyTeam.UI {
 
 
@@ -47,7 +49,8 @@ namespace TinyTeam.UI {
 
             Canvas can = go.AddComponent<Canvas>();
             can.renderMode = RenderMode.ScreenSpaceCamera;
-            can.pixelPerfect = true;
+            //can.renderMode = RenderMode.ScreenSpaceOverlay;
+            can.pixelPerfect = false;
             can.planeDistance = 1;
             go.AddComponent<GraphicRaycaster>();
 
@@ -92,24 +95,24 @@ namespace TinyTeam.UI {
             cs.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
 
             //2018.8.18 osmin 使用width适配,天然优势
-            //cs.matchWidthOrHeight = 0.5f;
+            // cs.matchWidthOrHeight = 0.5f;
             cs.matchWidthOrHeight = 0f;
             //set the raycaster
             //GraphicRaycaster gr = go.AddComponent<GraphicRaycaster>();
 
             GameObject subRoot;
 //            subRoot = CreateSubCanvasForRoot(go.transform, 0);
-            subRoot = CreateSubCanvas(go.transform, 51);
+            subRoot = CreateSubCanvas(go.transform, 0);
             subRoot.name = "NormalRoot";
             m_Instance.normalRoot = subRoot.transform as RectTransform;
             m_Instance.normalRoot.transform.localScale = Vector3.one;
 
-            subRoot = CreateSubCanvas(go.transform, 251);
+            subRoot = CreateSubCanvas(go.transform, 2);
             subRoot.name = "FixedRoot";
             m_Instance.fixedRoot = subRoot.transform as RectTransform;
             m_Instance.fixedRoot.transform.localScale = Vector3.one;
 
-            subRoot = CreateSubCanvas(go.transform, 501);
+            subRoot = CreateSubCanvas(go.transform, 4);
             subRoot.name = "PopupRoot";
             m_Instance.popupRoot = subRoot.transform as RectTransform;
             m_Instance.popupRoot.transform.localScale = Vector3.one;
@@ -152,17 +155,18 @@ namespace TinyTeam.UI {
         static GameObject CreateSubCanvas(Transform root,int sort)
         {
             GameObject go = new GameObject("canvas");
-            go.transform.SetParent(root,false);
+            go.transform.parent = root;
             go.layer = LayerMask.NameToLayer("UI");
             RectTransform rect = go.AddComponent<RectTransform>();
 
             Canvas can = go.AddComponent<Canvas>();
+            can.overrideSorting = true;
             can.sortingOrder = sort;
             rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, 0);
             rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0, 0);
             rect.anchorMin = Vector2.zero;
             rect.anchorMax = Vector2.one;
-
+            rect.anchoredPosition3D = Vector3.zero;
             go.AddComponent<GraphicRaycaster>();
 
             //子canvas不需要以下东西
@@ -173,22 +177,59 @@ namespace TinyTeam.UI {
 //            cs.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
             return go;
         }
-
-
-        void OnDestroy() {
+        //ui update
+        private void Update()
+        {
+            if(TTUIPage.allPages != null && TTUIPage.allPages.Count > 0)
+            {
+                var values = TTUIPage.allPages.Values.ToList();
+                for (var i = 0; i < values.Count; i++)
+                {
+                    if (values[i].isActive())
+                    {
+                        values[i].Update();
+                    }   
+                }
+            }
+        }
+        //当被销毁时,ui需要做什么
+        void OnDestroy()
+        {
             m_Instance = null;
             TTUIPage.ClearNodes();
             TTUIPage.ClearAllPage();
         }
+
+        //当暂停程序时,ui要做什么
+        private void OnApplicationFocus(bool pause)
+        {
+            if (TTUIPage.allPages != null && TTUIPage.allPages.Count > 0)
+            {
+                foreach (var i in TTUIPage.allPages.Values)
+                {
+                    if (i.isActive())
+                    {
+                        i.OnApplicationPause(pause);
+                    }
+                }
+            }
+        }
+
         //新增 添加ui不可控的方法
         public static void EnableRayCaster(bool ignore)
         {
             if(m_Instance != null)
             {
-                m_Instance.root.GetComponent<BaseRaycaster>().enabled = ignore;
-                m_Instance.fixedRoot.GetComponent<BaseRaycaster>().enabled = ignore;
-                m_Instance.popupRoot.GetComponent<BaseRaycaster>().enabled = ignore;
-                m_Instance.normalRoot.GetComponent<BaseRaycaster>().enabled = ignore;
+                //m_Instance.root.GetComponent<GraphicRaycaster>().enabled = ignore;
+                var uiRaycasters = m_Instance.root.GetComponentsInChildren<BaseRaycaster>(true);
+                for(int i = 0; i < uiRaycasters.Length; i ++)
+                {
+                    uiRaycasters[i].enabled = ignore;
+                }
+                //m_Instance.root.GetComponent<GraphicRaycaster>().enabled = ignore;
+                //m_Instance.fixedRoot.GetComponent<GraphicRaycaster>().enabled = ignore;
+                //m_Instance.popupRoot.GetComponent<GraphicRaycaster>().enabled = ignore;
+                //m_Instance.normalRoot.GetComponent<GraphicRaycaster>().enabled = ignore;
             }
         }
         public static async void ShortDisable(float time = 1f)
@@ -196,11 +237,6 @@ namespace TinyTeam.UI {
             if (m_Instance != null)
             {
                 EnableRayCaster(false);
-                //m_Instance.StartCoroutine(_ShortDisable(time));
-                //var task = Task.Run(async() => {
-                //    System.Threading.Tasks.Task.Delay((int)(time * 1000));
-                //    await AsyncTools.ToMainThread();
-                //});
                 await Task.Delay((int)(time * 1000));
                 EnableRayCaster(true);
             }

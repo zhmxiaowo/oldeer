@@ -13,6 +13,7 @@ public abstract class ItemInterface : MonoBehaviour {
     public virtual void Awake()
     {
         rt = transform as RectTransform;
+        Init();
     }
     //设定数据
     public virtual void SetData(int i)

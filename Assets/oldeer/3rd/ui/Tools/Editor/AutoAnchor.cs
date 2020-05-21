@@ -25,7 +25,7 @@ public class AutoAnchor : MonoBehaviour
         rect.offsetMin = rect.offsetMax = new Vector2(0, 0);  
     }  
 
-    [MenuItem("UGUI/Corners to Anchors %2")]  
+    [MenuItem("UGUI/Corners to Anchors %W")]  
     static void CornersToAnchors()  
     {  
         RectTransform rect = Selection.activeTransform as RectTransform;  

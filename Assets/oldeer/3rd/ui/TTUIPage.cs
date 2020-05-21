@@ -86,7 +86,7 @@ namespace TinyTeam.UI
 
         //refresh page 's data.
         private object m_data = null;
-        protected object data { get { return m_data; } }
+        public object data { get { return m_data; } set { m_data = value; } }
 
         //delegate load ui function.
         public static Func<string, Object> delegateSyncLoadUI = null;
@@ -99,6 +99,11 @@ namespace TinyTeam.UI
 
         ///Show UI Refresh Eachtime.
         public virtual void Refresh() { }
+
+        ///Update in unity main thread 
+        public virtual void Update() { }
+
+        public virtual void OnApplicationPause(bool pause) { }
 
         ///Active this UI
         public virtual void Active()
@@ -123,7 +128,13 @@ namespace TinyTeam.UI
         /// </summary>
         public virtual void Dispose()
         {
-
+            //清理掉当前ui
+            //if(this.isActive())
+            //{
+            //    TTUIPage.ClosePage(this);
+            //}
+            //TTUIPage.allPages.Remove(this.name);
+            //GameObject.Destroy(this.gameObject);
         }
         #endregion
 
@@ -291,20 +302,20 @@ namespace TinyTeam.UI
 
             if (type == UIType.Fixed)
             {
-                ui.transform.SetParent(TTUIRoot.Instance.fixedRoot,false);
+                ui.transform.SetParent(TTUIRoot.Instance.fixedRoot);
             }
             else if (type == UIType.Normal)
             {
-                ui.transform.SetParent(TTUIRoot.Instance.normalRoot,false);
+                ui.transform.SetParent(TTUIRoot.Instance.normalRoot);
             }
             else if (type == UIType.PopUp)
             {
-                ui.transform.SetParent(TTUIRoot.Instance.popupRoot,false);
+                ui.transform.SetParent(TTUIRoot.Instance.popupRoot);
             }
 
             if (ui.GetComponent<RectTransform>() != null)
             {
-                ui.GetComponent<RectTransform>().anchoredPosition = anchorPos;
+                ui.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(anchorPos.x, anchorPos.y,0);
                 ui.GetComponent<RectTransform>().sizeDelta = sizeDel;
                 ui.GetComponent<RectTransform>().localScale = scale;
             }
@@ -406,6 +417,7 @@ namespace TinyTeam.UI
             if(m_currentPageNodes != null)
                 m_currentPageNodes.Clear();
         }
+
         public static void ClearAllPage()
         {
             //清理一遍
@@ -418,7 +430,7 @@ namespace TinyTeam.UI
         }
 
         //step 2 search type
-        private static T ShowPage<T>(object pageData) where T : TTUIPage, new()
+        public static T ShowPage<T>(object pageData) where T : TTUIPage, new()
         {
             Type t = typeof(T);
             string pageName = t.ToString();
@@ -676,13 +688,15 @@ namespace TinyTeam.UI
                     if (m_currentPageNodes[i] == target)
                     {
                         m_currentPageNodes.RemoveAt(i);
-                        target.Hide();
+                        //target.Hide();
                         break;
                     }
                 }
             }
-
-            target.Hide();
+            if (target.isActive())
+            {
+                target.Hide();
+            }
         }
 
         public static void ClosePage<T>() where T : TTUIPage
@@ -691,7 +705,6 @@ namespace TinyTeam.UI
             {
                 Type t = typeof(T);
                 string pageName = t.ToString();
-
                 if (m_allPages != null && m_allPages.ContainsKey(pageName))
                 {
                     ClosePage(m_allPages[pageName]);
@@ -705,7 +718,6 @@ namespace TinyTeam.UI
                 Debug.Log(typeof(T).ToString()+"关闭失败");
                 Debug.Log(e.Message);
             }
-
         }
 
         public static void ClosePage(string pageName)
@@ -727,6 +739,21 @@ namespace TinyTeam.UI
             }
 
         }
+
+        ////when show UI animation write here
+        //public virtual void onBeginAnimation(TTUIPage page) { }
+        ////when hide UI animation write here
+        //public virtual void onHideAnimation(TTUIPage page) { }
+
+        ////when show or hide need animation using this
+        //public static async void PageAnimation<T>(T page1, T page2,int millisecond) where T : TTUIPage
+        //{
+        //    page1.onBeginAnimation(page2);
+        //    page2.onBeginAnimation(page1);
+        //    await System.Threading.Tasks.Task.Delay(millisecond);
+        //    page1.onHideAnimation(page2);
+        //    page2.onHideAnimation(page1);
+        //}
 
         #endregion
 
