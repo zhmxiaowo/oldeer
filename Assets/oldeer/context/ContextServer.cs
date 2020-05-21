@@ -21,7 +21,7 @@ public class ContextServer {
         //Debug.Log(t.Name);
         if (contexts.ContainsKey(t))
         {
-            OLog.Log(t + " Context already exist!");
+            Debug.Log(t + " Context already exist!");
         }
         else
         {
@@ -39,7 +39,7 @@ public class ContextServer {
         }
         else
         {
-            OLog.Log(type.ToString() + " not initalization yet!");
+            Debug.Log(type.ToString() + " not initalization yet!");
         }
         return null;
     }
@@ -68,7 +68,7 @@ public class ContextServer {
         {
             contexts = new Dictionary<System.Type, IContext>();
         }
-        OLog.Log("=====>context init<======");
+        Debug.Log("=====>context init<======");
     }
 
     //创建对象
