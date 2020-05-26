@@ -60,6 +60,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Assets\Editor\EmojiBuilder.cs" />
+    <Compile Include="Assets\GText\Editor\GTextBuilder.cs" />
     <Compile Include="Assets\oldeer\3rd\ui\Tools\Editor\AutoAnchor.cs" />
     <Compile Include="Assets\oldeer\editor\Copyright.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">

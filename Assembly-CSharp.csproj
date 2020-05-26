@@ -60,6 +60,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Assets\Scripts\EmojiText.cs" />
+    <Compile Include="Assets\GText\GText.cs" />
     <Compile Include="Assets\oldeer\3rd\CSharp vNext Support\AsyncTools\AsyncTools.cs" />
     <Compile Include="Assets\oldeer\3rd\CSharp vNext Support\AsyncTools\NextFrameHelper.cs" />
     <Compile Include="Assets\oldeer\3rd\CSharp vNext Support\AsyncTools\UnityTaskScheduler.cs" />
@@ -75,9 +77,9 @@
     <Compile Include="Assets\oldeer\context\Context.cs" />
     <Compile Include="Assets\oldeer\context\ContextServer.cs" />
     <Compile Include="Assets\oldeer\context\IContextStart.cs" />
+    <Compile Include="Assets\oldeer\emoji\TInputField.cs" />
     <Compile Include="Assets\oldeer\flow\AppInit.cs" />
     <Compile Include="Assets\oldeer\http\NetUtility.cs" />
-    <Compile Include="Assets\oldeer\io\FileHelper.cs" />
     <Compile Include="Assets\oldeer\io\FileUtility.cs" />
     <Compile Include="Assets\oldeer\io\ZipUtility.cs" />
     <Compile Include="Assets\oldeer\log\FileLogOutPut.cs" />
@@ -90,6 +92,11 @@
     <Compile Include="Assets\oldeer\Singleton\SingletonCreator.cs" />
     <Compile Include="Assets\oldeer\test\fm\testStart.cs" />
     <Compile Include="Assets\oldeer\test\ui\UIPanel.cs" />
+    <None Include="Assets\Assets\Emoji\Output\emoji.txt" />
+    <None Include="Assets\Assets\Shader\UI-EmojiFont.shader" />
+    <None Include="Assets\GText\Resources\emoji1.txt" />
+    <None Include="Assets\GText\Resources\UI-EmojiFont.shader" />
+    <None Include="Assets\Assets\Resources\emoji.txt" />
     <None Include="Assets\link.xml" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>G:/Git/oldeer/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
