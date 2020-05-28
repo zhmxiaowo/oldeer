@@ -33,7 +33,16 @@ public class EmojiText : Text
         }
     }
 
-    private void initEmojiData()
+    public static Dictionary<string, string> EmojiNameToText
+    {
+        get
+        {
+            initEmojiData();
+            return EmojiNameToIndex;
+        }
+    }
+
+    private static void initEmojiData()
     {
         if (EmojiIndex == null)
         {
@@ -294,7 +303,7 @@ public class EmojiText : Text
         return sb.ToString();
     }
 
-    private string GetConvertedString(string inputString)
+    private static string GetConvertedString(string inputString)
     {
         string[] converted = inputString.Split('-');
         for (int j = 0; j < converted.Length; j++)

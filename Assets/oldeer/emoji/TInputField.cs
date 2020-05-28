@@ -14,46 +14,85 @@ public class TInputField : InputField
         base.Awake();
         patterns.Add(@"\p{Cs}");
         patterns.Add(@"[\u2702-\u27B0]");
+        patterns.Add(@"[\u231a-\u1f9dd]");
         onValidateInput = MyOnValidateInput;
     }
+    //emoji最多是4个字符
+    LinkedList<char> charList = new LinkedList<char>();
+    int count = 0;
 
     private char MyOnValidateInput(string text, int charIndex, char addedChar)
     {
+        string utf16 = CharToUnicode(addedChar);
+        if(Regex.IsMatch(utf16, @"[\u231a-\u1f9dd]"))
+        {
+            //是emoji,那么就匹配一下,如果失败就丢进linklist
+            if(EmojiText.EmojiNameToText.ContainsKey(utf16))
+            {
+                //转码
+            }
+        }
+
+
+        //some emoji is 4byte or 2byte or 1byte
+        charList.AddLast(addedChar);
+        if (charList.Count > 4)
+        {
+            charList.RemoveLast();
+        }
+
         Debug.Log("text"+text);
         Debug.Log("charIndex"+charIndex);
         Debug.Log("addedChar"+addedChar.ToString());
-        byte[] b = new byte[2];
-        b[0] = (byte)((addedChar & 0xFF00) >> 8);
-        b[1] = (byte)(addedChar & 0xFF);
-        StringBuilder builder = new StringBuilder();
-        builder.Append(string.Format("\\u{0:x2}{1:x2}", b[0], b[1]));
 
-        Debug.Log(builder.ToString());
+
+        //Debug.Log(builder.ToString());
         return addedChar;
     }
 
-    private bool BEmoji(string s)
+    private bool isEmoji(char s)
     {
-        bool bEmoji = false;
-        for (int i = 0; i < patterns.Count; ++i)
+        return Regex.IsMatch(CharToUnicode(s), @"[\u231a-\u1f9dd]");
+    }
+    //private bool BEmoji(string s)
+    //{
+    //    Regex.IsMatch(s, patterns[i]);
+    //    bool bEmoji = false;
+    //    for (int i = 0; i < patterns.Count; ++i)
+    //    {
+    //        bEmoji = Regex.IsMatch(s, patterns[i]);
+    //        if (bEmoji)
+    //        {
+    //            break;
+    //        }
+    //    }
+    //    return bEmoji;
+    //}
+
+    //public void AddPatterns(string s)
+    //{
+    //    patterns.Add(s);
+    //}
+
+    //public void ClearPatterns(string s)
+    //{
+    //    patterns.Clear();
+    //}
+
+
+    public static string StringToUnicode(string str)
+    {
+        char[] chars = str.ToCharArray();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < chars.Length; i++)
         {
-            bEmoji = Regex.IsMatch(s, patterns[i]);
-            if (bEmoji)
-            {
-                break;
-            }
+            builder.Append(string.Format("\\u{0:x2}{1:x2}", (chars[i] & 0xFF00) >> 8, (chars[i] & 0xFF)));
         }
-        return bEmoji;
+        return builder.ToString();
     }
-
-    public void AddPatterns(string s)
+    public static string CharToUnicode(char str)
     {
-        patterns.Add(s);
-    }
-
-    public void ClearPatterns(string s)
-    {
-        patterns.Clear();
+        return string.Format("\\u{0:x2}{1:x2}", (str & 0xFF00) >> 8, (str & 0xFF));
     }
 }
     

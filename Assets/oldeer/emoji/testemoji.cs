@@ -27,4 +27,10 @@ public class testemoji : MonoBehaviour
         }
         return builder.ToString();
     }
+
+    //byte[] b = new byte[2];
+    //b[0] = (byte)((addedChar & 0xFF00) >> 8);
+    //b[1] = (byte)(addedChar & 0xFF);
+    //StringBuilder builder = new StringBuilder();
+    //builder.Append(string.Format("\\u{0:x2}{1:x2}", b[0], b[1]));
 }
