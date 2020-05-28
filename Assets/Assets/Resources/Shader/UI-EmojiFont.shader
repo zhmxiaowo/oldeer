@@ -1,6 +1,4 @@
-
-//	Author:zouchunyi
-//	E-mail:zouchunyi@kingsoft.com
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
 Shader "UI/EmojiFont" {
 	Properties {
@@ -110,28 +108,21 @@ Shader "UI/EmojiFont" {
 				fixed4 color;
 				if (IN.texcoord1.x >0 && IN.texcoord1.y > 0)
 				{
-					// it's an emoji
-
-					// compute the size of emoji
 					half size = (1 / _EmojiSize);
-					// compute the center uv of per pixel in the emoji
-					half2 uv = half2(floor(IN.texcoord1.x * _EmojiSize) * size + 0.5 * size,floor(IN.texcoord1.y * _EmojiSize) * size + 0.5 * size);
-					// read data
+					half2 uv = half2(floor(IN.texcoord1.x / size) * size + 0.5 * size,floor(IN.texcoord1.y / size) * size + 0.5 * size);
 					fixed4 data = tex2D(_EmojiDataTex, uv);
-					// compute the frame count of emoji
+						
 					half frameCount = 1 + sign(data.r) + sign(data.g) * 2 + sign(data.b) * 4;
-					// compute current frame index of emoji
 					half index = abs(fmod(floor(_Time.x * _FrameSpeed * 50), frameCount));
-					// judge current frame is in the next line or not.
-					half flag = (1 + sign(IN.texcoord1.x + index * size - 1)) * 0.5;
-					// compute the final uv
+
+					half factor2 = 2;
+					half flag = (1 + sign(IN.texcoord1.x + index * size - 1)) / factor2;
 					IN.texcoord1.x += index * size - flag;
 					IN.texcoord1.y += size * flag;
 
 					color = tex2D(_EmojiTex, IN.texcoord1);
 				}else
 				{
-					// it's a text, and render it as normal ugui text
 					color = (tex2D(_MainTex, IN.texcoord) + _TextureSampleAdd) * IN.color;
 				}
 

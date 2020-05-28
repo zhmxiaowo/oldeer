@@ -19,18 +19,16 @@ public class TInputField : InputField
 
     private char MyOnValidateInput(string text, int charIndex, char addedChar)
     {
-        Debug.Log("😀");
-        byte[] b = UnicodeEncoding.Unicode.GetBytes("😀");
-        Debug.Log(UTF8Encoding.Unicode.GetString(b));
-        Debug.Log(b.Length);
-        if (patterns.Count > 0)
-        {
-            string s = string.Format("{0}", addedChar);
-            if (BEmoji(s))
-            {
-                return '\0';
-            }
-        }
+        Debug.Log("text"+text);
+        Debug.Log("charIndex"+charIndex);
+        Debug.Log("addedChar"+addedChar.ToString());
+        byte[] b = new byte[2];
+        b[0] = (byte)((addedChar & 0xFF00) >> 8);
+        b[1] = (byte)(addedChar & 0xFF);
+        StringBuilder builder = new StringBuilder();
+        builder.Append(string.Format("\\u{0:x2}{1:x2}", b[0], b[1]));
+
+        Debug.Log(builder.ToString());
         return addedChar;
     }
 

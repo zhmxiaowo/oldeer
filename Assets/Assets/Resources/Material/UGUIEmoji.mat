@@ -9,11 +9,11 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: UGUIEmoji
   m_Shader: {fileID: 4800000, guid: 5bf52ea27cd9ff345b6e2e56deb64231, type: 3}
-  m_ShaderKeywords: _EMISSION
+  m_ShaderKeywords: UNITY_UI_ALPHACLIP _EMISSION
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3000
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -65,12 +65,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _BumpScale: 1
-    - _ColorMask: 15
+    - _ColorMask: 14.16
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EmojiSize: 4
-    - _FrameSpeed: 2.5
+    - _EmojiSize: 1
+    - _FrameSpeed: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -87,7 +87,7 @@ Material:
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
     - _UVSec: 0
-    - _UseUIAlphaClip: 0
+    - _UseUIAlphaClip: 1
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}

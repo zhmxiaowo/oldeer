@@ -1,23 +1,16 @@
 ﻿/*
 
-	Description:Create the Atlas of emojis and its data texture.
+	插件说明：用于将原始散图序列帧表情图片生成Atlas
 
-	How to use?
-	1)
-		Put all emojies in Asset/Framework/Resource/Emoji/Input.
-		Multi-frame emoji name format : Name_Index.png , Single frame emoji format: Name.png
-	2)
-		Excute EmojiText->Build Emoji from menu in Unity.
-	3)
-		It will outputs two textures and a txt in Emoji/Output.
-		Drag emoji_tex to "Emoji Texture" and emoji_data to "Emoji Data" in UGUIEmoji material.
-	4)
-		Repair the value of "Emoji count of every line" base on emoji_tex.png.
-	5)
-		It will auto copys emoji.txt to Resources, and you can overwrite relevant functions base on your project.
+	所有表情需要放到Asset/Framework/Resource/Emoji/Input中
+	命名格式为	表情名_序列帧.png 	其中单帧表情为	表情名.png
+
+	输出的Atlas会放到对应的Output中
+	其中包含两张图片，一张图片Atlas，一张数据Atlas。分别对应Emoji Shader中的_MainTex和_DataTex
+	输出的数据文件为emoji.txt，同时也会自动拷贝到Asset/GameData中，用于生成LuaTable
+	
 	
 	Author:zouchunyi
-	E-mail:zouchunyi@kingsoft.com
 */
 
 using UnityEngine;
@@ -28,8 +21,9 @@ using System.IO;
 
 public class EmojiBuilder  {
 
-	private const string OutputPath = "Assets/Emoji/Output/";
-	private const string InputPath = "/Emoji/Input/";
+    public static string allstr = "";
+	private const string OutputPath = "Assets/Assets/Emoji/Output/";
+	private const string InputPath = "/Assets/Emoji/Input/";
 
 	private static readonly Vector2[] AtlasSize = new Vector2[]{
 		new Vector2(32,32),
@@ -48,44 +42,34 @@ public class EmojiBuilder  {
 		public string y;
 		public string size;
 	}
-	private const int EmojiSize = 32;//the size of emoji.
+	private const int EmojiSize = 36;//表情尺寸
 
-	[MenuItem("EmojiText/Build Emoji")]
-	public static void BuildEmoji()
+    [MenuItem("EmojiText/Build Emoji")]
+    public static void BuildEmoji()
 	{
-		// List<char> keylist = new List<char> ();
-		// for(int i = 0; i<100; i++)
-		// {
-		// 	keylist.Add(i.ToString());
-		// }
-		// for (int i = 48; i <= 57; i++) {
-		// 	keylist.Add (System.Convert.ToChar(i));//0-9
-		// }
-		// for (int i = 65; i <= 90; i++) {
-		// 	keylist.Add (System.Convert.ToChar(i));//A-Z
-		// }
-		// for (int i = 97; i <= 122; i++) {
-		// 	keylist.Add (System.Convert.ToChar(i));//a-z
-		// }
+        allstr = "";
+		List<char> keylist = new List<char> ();
+		for (int i = 48; i <= 57; i++) {
+			keylist.Add (System.Convert.ToChar(i));//0-9
+		}
+		for (int i = 65; i <= 90; i++) {
+			keylist.Add (System.Convert.ToChar(i));//A-Z
+		}
+		for (int i = 97; i <= 122; i++) {
+			keylist.Add (System.Convert.ToChar(i));//a-z
+		}
 
-		//search all emojis and compute they frames.
+		//搜集全部表情图片并确定每个表情由多少帧组成
 		Dictionary<string,int> sourceDic = new Dictionary<string,int> ();
 		string[] files = Directory.GetFiles (Application.dataPath + InputPath,"*.png");
 		for (int i = 0; i < files.Length; i++) {
 			string[] strs = files [i].Split ('/');
 			string[] strs2 = strs [strs.Length - 1].Split ('.');
 			string filename = strs2 [0];
-
-			string[] t = filename.Split('_');
-			string id = t [0];
-			if (sourceDic.ContainsKey(id)) {
-				sourceDic[id]++;
-			} else {
-				sourceDic.Add (id, 1);
-			}
+            sourceDic.Add(filename, 1);
 		}
 			
-		//create the directory if it is not exist.
+		//没有输出目录自动创建
 		if (!Directory.Exists (OutputPath)) {
 			Directory.CreateDirectory (OutputPath);
 		}	
@@ -107,12 +91,7 @@ public class EmojiBuilder  {
 			for (int index = 0; index < sourceDic[key]; index++) {
 				
 				string path = "Assets" + InputPath + key;
-				if (sourceDic[key] == 1) {
-					path += ".png";
-				} else {
-					path += "_" + (index + 1).ToString() + ".png";
-				}
-
+	            path += ".png";
 				Texture2D asset = AssetDatabase.LoadAssetAtPath<Texture2D> (path);
 				Color[] colors = asset.GetPixels (0); 
 
@@ -139,14 +118,13 @@ public class EmojiBuilder  {
 
 				if (! emojiDic.ContainsKey (key)) {
 					EmojiInfo info;
-					// if (keyindex < keylist.Count)
-					// {
-					// 	info.key = "[" + char.ToString(keylist[keyindex]) + "]";
-					// }else
-					// {
-					// 	info.key = "[" + char.ToString(keylist[keyindex / keylist.Count]) + char.ToString(keylist[keyindex % keylist.Count]) + "]";
-					// }
-					info.key = "[" + keyindex + "]";
+					if (keyindex < keylist.Count)
+					{
+						info.key = "[" + char.ToString(keylist[keyindex]) + "]";
+					}else
+					{
+						info.key = "[" + char.ToString(keylist[keyindex / keylist.Count]) + char.ToString(keylist[keyindex % keylist.Count]) + "]";
+					}
 					info.x = (x * 1.0f / texSize.x).ToString();
 					info.y = (y * 1.0f / texSize.y).ToString();
 					info.size = (EmojiSize * 1.0f / texSize.x).ToString ();
@@ -156,7 +134,7 @@ public class EmojiBuilder  {
 				}
 
 				x += EmojiSize;
-				if (x >= texSize.x) {
+				if (x+ EmojiSize >= texSize.x) {
 					x = 0;
 					y += EmojiSize;
 				}
@@ -174,45 +152,25 @@ public class EmojiBuilder  {
 		using (StreamWriter sw = new StreamWriter (OutputPath + "emoji.txt",false)) {
 			sw.WriteLine ("Name\tKey\tFrames\tX\tY\tSize");
 			foreach (string key in emojiDic.Keys) {
-				sw.WriteLine ("{" + key + "}\t" + emojiDic[key].key + "\t" + sourceDic[key] + "\t" + emojiDic[key].x + "\t" + emojiDic[key].y + "\t" + emojiDic[key].size);
+                string tmpk = key;
+				sw.WriteLine (tmpk + "\t" + emojiDic[key].key + "\t" + sourceDic[key] + "\t" + emojiDic[key].x + "\t" + emojiDic[key].y + "\t" + emojiDic[key].size);
 			}
 			sw.Close ();
 		}
-
-		File.Copy (OutputPath + "emoji.txt","Assets/Resources/emoji.txt",true);
-
-		AssetDatabase.Refresh ();
-		FormatTexture ();
-
+        File.Copy (OutputPath + "emoji.txt", "Assets/Resources/emoji.txt", true);
+        Debug.LogError(allstr);
+        AssetDatabase.Refresh();
 		EditorUtility.DisplayDialog ("Success", "Generate Emoji Successful!", "OK");
 	}
 
 	private static Vector2 ComputeAtlasSize(int count)
 	{
-		long total = count * EmojiSize * EmojiSize;
+		long total = (count+1) * EmojiSize * EmojiSize;
 		for (int i = 0; i < AtlasSize.Length; i++) {
 			if (total <= AtlasSize [i].x * AtlasSize [i].y) {
 				return AtlasSize [i];
 			}
 		}
 		return Vector2.zero;
-	}
-
-	private static void FormatTexture() {
-		TextureImporter emojiTex = AssetImporter.GetAtPath (OutputPath + "emoji_tex.png") as TextureImporter;
-		emojiTex.filterMode = FilterMode.Point;
-		emojiTex.mipmapEnabled = false;
-		emojiTex.sRGBTexture = true;
-		emojiTex.alphaSource = TextureImporterAlphaSource.FromInput;
-		emojiTex.textureCompression = TextureImporterCompression.Uncompressed;
-		emojiTex.SaveAndReimport ();
-
-		TextureImporter emojiData = AssetImporter.GetAtPath (OutputPath + "emoji_data.png") as TextureImporter;
-		emojiData.filterMode = FilterMode.Point;
-		emojiData.mipmapEnabled = false;
-		emojiData.sRGBTexture = false;
-		emojiData.alphaSource = TextureImporterAlphaSource.None;
-		emojiData.textureCompression = TextureImporterCompression.Uncompressed;
-		emojiData.SaveAndReimport ();
 	}
 }
