@@ -256,7 +256,7 @@ public class EmojiText : Text
     }
 
 
-    public string SetUITextThatHasEmoji(string inputString)
+    public static string SetUITextThatHasEmoji(string inputString)
     {
         StringBuilder sb = new StringBuilder();
         int i = 0;

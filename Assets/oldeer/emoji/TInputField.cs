@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿#define UNITY_ANDROID
+using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Text;
+using System;
 
 public class TInputField : InputField
 {
@@ -16,34 +18,44 @@ public class TInputField : InputField
         patterns.Add(@"[\u2702-\u27B0]");
         patterns.Add(@"[\u231a-\u1f9dd]");
         onValidateInput = MyOnValidateInput;
+        Application.runInBackground = true;
     }
-    //emoji最多是4个字符
-    LinkedList<char> charList = new LinkedList<char>();
-    int count = 0;
-
+    //some emoji is 4byte or 2byte or 1byte
+    List<char> charList = new List<char>(5);
     private char MyOnValidateInput(string text, int charIndex, char addedChar)
     {
         string utf16 = CharToUnicode(addedChar);
-        if(Regex.IsMatch(utf16, @"[\u231a-\u1f9dd]"))
-        {
-            //是emoji,那么就匹配一下,如果失败就丢进linklist
-            if(EmojiText.EmojiNameToText.ContainsKey(utf16))
-            {
-                //转码
-            }
-        }
+        Debug.Log("addedChar" + utf16);
 
+        this.text = EmojiText.SetUITextThatHasEmoji(text);
+        return '\0';
 
-        //some emoji is 4byte or 2byte or 1byte
-        charList.AddLast(addedChar);
-        if (charList.Count > 4)
-        {
-            charList.RemoveLast();
-        }
-
-        Debug.Log("text"+text);
-        Debug.Log("charIndex"+charIndex);
-        Debug.Log("addedChar"+addedChar.ToString());
+        //if (Regex.IsMatch(new string(addedChar,1), @"[\u1f600-\u1f9dd]"))
+        //{
+        //    charList.Add(addedChar);
+        //    //是emoji,那么就匹配一下,如果失败就丢进linklist
+        //    string str = new string(charList.ToArray());
+        //    if (EmojiText.EmojiNameToText.ContainsKey(str))
+        //    {
+        //        m_Text = text.Substring(0, text.Length - 1) + EmojiText.EmojiNameToText[str];
+        //        charList.Clear();
+        //        //转码
+        //        Debug.Log("emoji!");
+        //    }else
+        //    {
+        //        Debug.Log("not emoji!");
+        //        if(charList.Count > 4)
+        //        {
+        //            Debug.Log("Emoji check failure.clean all chars");
+        //            charList.Clear();
+        //        }
+        //    }
+        //    return '\0';
+        //}
+        //byte[] uncoide_16 = System.Text.Encoding.Default.GetBytes(text);
+        //Debug.Log("text"+Encoding.UTF8.GetString(uncoide_16));
+        //Debug.Log("charIndex"+charIndex);
+        //Debug.Log("addedChar" + utf16);
 
 
         //Debug.Log(builder.ToString());
