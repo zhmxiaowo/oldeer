@@ -10,6 +10,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+/// <summary>
+/// 上下文中心,可获取所有你生成的Context
+/// </summary>
 public class ContextServer {
 
     //context中心
@@ -28,7 +31,11 @@ public class ContextServer {
             contexts.Add(t, c);
         }
     }
-    //获取对象
+    /// <summary>
+    /// 获取对象
+    /// </summary>
+    /// <typeparam name="T"> 必须是继承IContext的类型</typeparam>
+    /// <returns></returns>
     public static T GetContext<T>() where T : class,IContext
     {
         System.Type type = typeof(T);
@@ -44,6 +51,11 @@ public class ContextServer {
         return null;
     }
 
+    /// <summary>
+    /// 获取到子类对象
+    /// </summary>
+    /// <typeparam name="T">父类类型</typeparam>
+    /// <returns></returns>
     public static T GetSimilarContext<T>() where T : class, IContext
     {
         System.Type type = typeof(T);
@@ -57,7 +69,9 @@ public class ContextServer {
         return null;
     }
 
-    //初始化
+    /// <summary>
+    /// 初始化
+    /// </summary>
     public static void Init()
     {
         if(contexts != null)
@@ -71,7 +85,11 @@ public class ContextServer {
         Debug.Log("=====>context init<======");
     }
 
-    //创建对象
+    /// <summary>
+    /// 创建对象
+    /// </summary>
+    /// <typeparam name="T">IContext类型</typeparam>
+    /// <returns></returns>
     public static T CreateContext<T>() where T : class, IContext
     {
         //创建context
@@ -102,7 +120,9 @@ public class ContextServer {
 
     }
 
-
+    /// <summary>
+    /// 清理所有context
+    /// </summary>
     public static void Dispose()
     {
         contexts.Clear();

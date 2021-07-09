@@ -9,13 +9,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//context 接口
+/// <summary>
+/// context 接口
+/// </summary>
 public interface IContext
 {
     void Init();
 }
 
-//非挂载的context
+/// <summary>
+/// 非挂载的context
+/// </summary>
 public abstract class BaseContext : IContext
 {
     //注册和调用事件的接口
@@ -36,23 +40,32 @@ public abstract class BaseContext : IContext
     }
 }
 
-//挂载Unity的context
+/// <summary>
+/// 挂载Unity的context
+/// </summary>
 public abstract class MonoContext : MonoBehaviour,IContext
 {
 
-    //注册和调用事件的接口
+    /// <summary>
+    /// 注册和调用事件的接口
+    /// </summary>
     protected virtual void Register()
     {
 
     }
 
-    //初始化会注册到控制中心
+    /// <summary>
+    /// 初始化会注册到控制中心
+    /// </summary>
     public MonoContext()
     {
         //注册
         ContextServer.OnRegister(this.GetType(), this);
         Init();
     }
+    /// <summary>
+    /// 初始化接口,在创建后自动调用
+    /// </summary>
     public virtual void Init()
     {
 
