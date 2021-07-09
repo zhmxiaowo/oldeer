@@ -12,14 +12,14 @@ using System.Security.Cryptography.X509Certificates;
 namespace oldeer
 {
     /// <summary>
-    /// Net help
+    /// net for help
     /// </summary>
     public static class NetUtility
     {
         /// <summary>
         ///  Get the http length
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="url">地址</param>
         /// <param name="timeout">millisecond</param>
         /// <returns>http url:html size ,file url:file bytes length </returns>
         public static long HttpGetSize(string url, int timeout = 3000)
@@ -48,7 +48,8 @@ namespace oldeer
         /// Post a request to server 
         /// *1.use "application/x-www-form-urlencoded" to upload(easy,sort),so server can read just like a=1&b=2
         /// *2 "multipart/form-data" to upload(one by one part,long),this one can upload a file.
-        public static string Post(string url, IDictionary<string, string> parameters = null, int timeout = 3000, int readWriteTimeout = 3000)
+        /// </summary>
+        public static string Post(string url, IDictionary<string, string> parameters = null,int timeout = 3000,int readWriteTimeout = 3000)
         {
             HttpWebRequest request = null;
             if (url.StartsWith("https"))
@@ -128,6 +129,14 @@ namespace oldeer
             return result;
         }
 
+        /// <summary>
+        /// Get 方法,使用Dictionary传递参数
+        /// </summary>
+        /// <param name="url">地址</param>
+        /// <param name="parameters">表单参数</param>
+        /// <param name="timeout">连接超时设置</param>
+        /// <param name="readWriteTimeout">读写超时设置</param>
+        /// <returns>页面文本内容</returns>
         public static string Get(string url, IDictionary<string, string> parameters = null, int timeout = 3000, int readWriteTimeout = 3000)
         {
             string result = "";
@@ -201,7 +210,14 @@ namespace oldeer
             return "";
 
         }
-        //async post
+        /// <summary>
+        /// async post
+        /// </summary>
+        /// <param name="url">地址</param>
+        /// <param name="parameters">字典参数k-v</param>
+        /// <param name="timeout">连接超时</param>
+        /// <param name="readWriteTimeout">读写超时</param>
+        /// <returns></returns>
         public static Task<string> PostAsync(string url, IDictionary<string, string> parameters = null, int timeout = 3000, int readWriteTimeout = 3000)
         {
             return Task.Run(() =>
@@ -210,7 +226,14 @@ namespace oldeer
             });
         }
 
-        //async get
+        /// <summary>
+        /// async get
+        /// </summary>
+        /// <param name="url">地址</param>
+        /// <param name="parameters">字典参数k-v</param>
+        /// <param name="timeout">连接超时</param>
+        /// <param name="readWriteTimeout">读写超时</param>
+        /// <returns></returns>
         public static Task<string> GetAsync(string url, IDictionary<string, string> parameters = null, int timeout = 3000, int readWriteTimeout = 3000)
         {
             return Task.Run(() =>
@@ -220,8 +243,14 @@ namespace oldeer
         }
 
 
-        //download and save file
-        //not support big file more than MaxValue = 2147483647;
+        /// <summary>
+        /// 一次性下载文件
+        /// not support big file more than MaxValue = 2147483647;
+        /// </summary>
+        /// <param name="url">网络文件地址</param>
+        /// <param name="path">本地保存路径</param>
+        /// <param name="timeout">连接超时</param>
+        /// <returns></returns>
         public static byte[] HttpDownload(string url, string path, int timeout = 3000)
         {
             byte[] data = null;
@@ -258,8 +287,15 @@ namespace oldeer
             }
         }
 
-        //download and save file
-        //support download big file
+        /// <summary>
+        /// download and save file
+        /// support download big file
+        /// </summary>
+        /// <param name="url">网络文件地址</param>
+        /// <param name="path">本地保存路径</param>
+        /// <param name="timeout">连接超时</param>
+        /// <param name="readWriteTimeout">下载文件超时</param>
+        /// <returns></returns>
         public static bool HttpDownload(string url, string path, int timeout = 3000, int readWriteTimeout = 3000)
         {
             try
@@ -303,7 +339,15 @@ namespace oldeer
             }
         }
 
-        //下载文件
+        /// <summary>
+        /// 带下载进度的下载文件
+        /// </summary>
+        /// <param name="url">网络文件地址</param>
+        /// <param name="path">本地保存路径</param>
+        /// <param name="onProgressHandler">进度回调 float值0~1</param>
+        /// <param name="timeout">连接超时</param>
+        /// <param name="readWriteTimeout">下载文件超时</param>
+        /// <returns></returns>
         public static bool HttpDownload(string url, string path, System.Action<float> onProgressHandler = null, int timeout = 3000, int readWriteTimeout = 3000)
         {
             try
@@ -350,7 +394,7 @@ namespace oldeer
         }
 
         /// <summary>
-        /// 生成时间戳
+        /// 生成时间戳,相当于一个毫秒级的uuid很有用
         /// </summary>
         /// <returns></returns>
         public static string GetTimeStamp()
@@ -360,7 +404,14 @@ namespace oldeer
         }
 
 
-        //for https
+        /// <summary>
+        /// https开头的链接需要
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="certificate"></param>
+        /// <param name="chain"></param>
+        /// <param name="errors"></param>
+        /// <returns></returns>
         private static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
         {
             return true;

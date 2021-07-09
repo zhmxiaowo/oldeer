@@ -13,7 +13,9 @@ namespace test
 {
     public class UIPanel : TTUIPage
     {
-        
+        /// <summary>
+        /// 固定写法,uipath为Resouce下的UI Prefeb名字
+        /// </summary>
         public UIPanel() : base(UIType.PopUp, UIMode.DoNothing, UICollider.Normal)
         {
             uiPath = "UIPanel";

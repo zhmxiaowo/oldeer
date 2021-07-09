@@ -15,13 +15,19 @@ using System.IO;
 /// </summary>
 public static class FileUtility
 {
-    //主文件路径
+    /// <summary>
+    /// 主文件路径
+    /// </summary>
     public static string local_data_path = Application.persistentDataPath + "/creator/";
 
-    //临时文件路径
+    /// <summary>
+    /// 临时文件路径
+    /// </summary>
     public static string local_temp_path = Application.temporaryCachePath + "/";
 
-    //unity主线程调用一次 路径信息,防止出错
+    /// <summary>
+    /// unity主线程调用一次 路径信息,防止出错
+    /// </summary>
     public static void init()
     {
         local_data_path = Application.persistentDataPath + "/creator/";
@@ -158,7 +164,13 @@ public static class FileUtility
     }
 
     #region alongside texture
-    //从本地加载图片
+    /// <summary>
+    /// 从本地加载图片
+    /// </summary>
+    /// <param name="texpath">图片路径</param>
+    /// <param name="w">宽,不知道可以不填</param>
+    /// <param name="h">高,不知道可以不填</param>
+    /// <returns>图片类型</returns>
     public static Texture2D LoadTexutreFromDisk(string texpath, int w = 1, int h = 1)
     {
         byte[] datas = ReadFileByte(texpath);
@@ -175,13 +187,23 @@ public static class FileUtility
         }
         return tex;
     }
-    //获取sprite
+    /// <summary>
+    /// 获取sprite
+    /// </summary>
+    /// <param name="tex"></param>
+    /// <returns></returns>
     public static Sprite GetSprite(Texture2D tex)
     {
         Sprite sp = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.one * 0.5f);
         return sp;
     }
-    //获取spirte
+    /// <summary>
+    /// 获取spirte
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="w"></param>
+    /// <param name="h"></param>
+    /// <returns></returns>
     public static Sprite GetSprite(string path, int w = 1, int h = 1)
     {
         Texture2D tex = LoadTexutreFromDisk(path, w, h);

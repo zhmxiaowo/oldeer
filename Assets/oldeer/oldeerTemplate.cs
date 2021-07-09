@@ -12,14 +12,14 @@ using UnityEngine;
 namespace oldeer
 {
     /// <summary>
-    /// 模板类     注释可以对照这里,养成良好的编码习惯
+    /// 模板类 
     /// </summary>
     class oldeerTemplate
     {
-        //临时变量
+        /// 临时变量
         public int template;
 
-        //无参数的方法
+        /// 无参数的方法
         public void Add()
         {
 

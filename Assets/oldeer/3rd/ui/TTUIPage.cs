@@ -49,19 +49,29 @@ namespace TinyTeam.UI
     {
         public string name = string.Empty;
 
-        //this page's id
+        /// <summary>
+        /// this page's id
+        /// </summary>
         public int id = -1;
 
-        //this page's type
+        /// <summary>
+        /// this page's type
+        /// </summary>
         public UIType type = UIType.Normal;
 
-        //how to show this page.
+        /// <summary>
+        /// how to show this page.
+        /// </summary>
         public UIMode mode = UIMode.DoNothing;
 
-        //the background collider mode
+        /// <summary>
+        /// the background collider mode
+        /// </summary>
         public UICollider collider = UICollider.None;
 
-        //path to load ui
+        /// <summary>
+        /// path to load ui
+        /// </summary>
         public string uiPath = string.Empty;
 
         //this ui's gameobject
